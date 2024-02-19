@@ -82,7 +82,9 @@ const HomeScreen = () => {
           ) : null}
         </View>
 
-        <View className="mx-4 flex justify-around flex-1 mb-2">
+        {/* Forecast section */}
+        <View className="mx-4 flex justify-around flex-1 mb-4">
+          {/* Location */}
           <Text className="text-white text-center text-2xl font-bold">
             London,
             <Text className="text-lg font-semibold text-gray-300">
@@ -90,15 +92,17 @@ const HomeScreen = () => {
             </Text>
           </Text>
 
+          {/* Weather image */}
           <View className="flex-row justify-center">
             <Image
-              source={require("../assets/sunCloud.png")}
+              source={require("../assets/Image.webp")}
               className="w-52 h-52"
             ></Image>
           </View>
         </View>
 
-        <View className="space-y-2">
+        {/* Degree celcius */}
+        <View className="space-y-1 mb-10">
           <Text className="text-center font-bold text-white text-6xl ml-5">
             23&#176;
           </Text>
@@ -106,6 +110,32 @@ const HomeScreen = () => {
           <Text className="text-center  text-white text-xl tracking-widest">
             Partly cloudy
           </Text>
+        </View>
+
+        <View className="flex-row justify-between mx-4">
+          <View className="flex-row space-x-2 items-center justify-center">
+            <Image
+              source={require("../assets/windmills.png")}
+              className="h-6 w-6"
+            ></Image>
+            <Text className="text-white font-semibold text-base">22km</Text>
+          </View>
+
+          <View className="flex-row space-x-2 items-center justify-center">
+            <Image
+              source={require("../assets/windmills.png")}
+              className="h-6 w-6"
+            ></Image>
+            <Text className="text-white font-semibold text-base">22km</Text>
+          </View>
+
+          <View className="flex-row space-x-2 items-center justify-center">
+            <Image
+              source={require("../assets/windmills.png")}
+              className="h-6 w-6"
+            ></Image>
+            <Text className="text-white font-semibold text-base">22km</Text>
+          </View>
         </View>
       </SafeAreaView>
     </View>
