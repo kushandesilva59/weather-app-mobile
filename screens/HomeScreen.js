@@ -7,10 +7,12 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { theme } from "../theme";
-import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import { CalendarDaysIcon, MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { MapPinIcon } from "react-native-heroicons/solid";
+
 
 const HomeScreen = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -123,20 +125,31 @@ const HomeScreen = () => {
 
           <View className="flex-row space-x-2 items-center justify-center">
             <Image
-              source={require("../assets/windmills.png")}
+              source={require("../assets/water-drop.png")}
               className="h-6 w-6"
             ></Image>
-            <Text className="text-white font-semibold text-base">22km</Text>
+            <Text className="text-white font-semibold text-base">23%</Text>
           </View>
 
           <View className="flex-row space-x-2 items-center justify-center">
             <Image
-              source={require("../assets/windmills.png")}
+              source={require("../assets/sun.png")}
               className="h-6 w-6"
             ></Image>
-            <Text className="text-white font-semibold text-base">22km</Text>
+            <Text className="text-white font-semibold text-base">6:05 AM</Text>
           </View>
         </View>
+
+        {/* forecast for next days */}
+        <View className='mb-2 space-y-3'>
+          <View className='flex-row items-center mx-5 space-x-2'>
+            <CalendarDaysIcon size='22' color='white'/>
+            <Text className='text-white text-base'>Daily forecast</Text>
+          </View>
+        </View>
+        <ScrollView   horizontal
+        contentContainerStyle={{paddingHorizontal: 15}}
+        showsHorizontallScrollIndicator={false}></ScrollView>
       </SafeAreaView>
     </View>
   );
