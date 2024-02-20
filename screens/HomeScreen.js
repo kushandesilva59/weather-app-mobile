@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,20 +7,37 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { theme } from "../theme";
-import { CalendarDaysIcon, MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import {
+  CalendarDaysIcon,
+  MagnifyingGlassIcon,
+} from "react-native-heroicons/outline";
 import { MapPinIcon } from "react-native-heroicons/solid";
+import { debounce } from "lodash";
+import { fetchLocations } from "../api/weather";
 
-
-const HomeScreen = () => {
+export default function HomeScreen() {
   const [showSearch, setShowSearch] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [locations, setLocations] = useState([1, 2, 3]);
 
   const handleLocation = (loc) => {
     console.log("Location", loc);
   };
+
+  const handleSearch = (value) => {
+    console.log(value);
+
+    if (value.length > 2) {
+      fetchLocations({ cityName: value }).then((data) => {
+        console.log("Got locations", data);
+      });
+    }
+  };
+
+  const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
 
   return (
     <View className="flex-1 relative">
@@ -42,6 +59,7 @@ const HomeScreen = () => {
           >
             {showSearch ? (
               <TextInput
+                onChangeText={handleTextDebounce}
                 placeholder="Search city"
                 placeholderTextColor={"lightgray"}
                 className="pl-6 h-10 pb-1 flex-1 text-base text-white"
@@ -120,7 +138,7 @@ const HomeScreen = () => {
               source={require("../assets/windmills.png")}
               className="h-6 w-6"
             ></Image>
-            <Text className="text-white font-semibold text-base">22km</Text>
+            <Text className="text-white font-semibold text-base">22kmh</Text>
           </View>
 
           <View className="flex-row space-x-2 items-center justify-center">
@@ -141,18 +159,57 @@ const HomeScreen = () => {
         </View>
 
         {/* forecast for next days */}
-        <View className='mb-2 space-y-3'>
-          <View className='flex-row items-center mx-5 space-x-2'>
-            <CalendarDaysIcon size='22' color='white'/>
-            <Text className='text-white text-base'>Daily forecast</Text>
+        <View className="mb-2 space-y-3">
+          <View className="flex-row items-center mx-5 space-x-2">
+            <CalendarDaysIcon size="22" color="white" />
+            <Text className="text-white text-base">Daily forecast</Text>
           </View>
         </View>
-        <ScrollView   horizontal
-        contentContainerStyle={{paddingHorizontal: 15}}
-        showsHorizontallScrollIndicator={false}></ScrollView>
+        <ScrollView
+          horizontal
+          contentContainerStyle={{ paddingHorizontal: 15 }}
+          showsHorizontallScrollIndicator={false}
+        >
+          <View
+            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
+            style={{ backgroundColor: theme.bgWhite(0.15) }}
+          >
+            <Image
+              source={require("../assets/moon.png")}
+              className="h-11 w-11"
+            />
+            <Text className="text-white">Monday</Text>
+            <Text className="text-white text-xl font-semibold">13&#176;</Text>
+          </View>
+
+          {/* <View
+            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
+            style={{ backgroundColor: theme.bgWhite(0.15) }}
+          >
+            <Image source={require("../assets/")} className="h-11 w-11" />
+            <Text className="text-white">Monday</Text>
+            <Text className="text-white text-xl font-semibold">13&#176;</Text>
+          </View>
+
+          <View
+            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
+            style={{ backgroundColor: theme.bgWhite(0.15) }}
+          >
+            <Image source={require("../assets/")} className="h-11 w-11" />
+            <Text className="text-white">Monday</Text>
+            <Text className="text-white text-xl font-semibold">13&#176;</Text>
+          </View>
+
+          <View
+            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
+            style={{ backgroundColor: theme.bgWhite(0.15) }}
+          >
+            <Image source={require("../assets/")} className="h-11 w-11" />
+            <Text className="text-white">Monday</Text>
+            <Text className="text-white text-xl font-semibold">13&#176;</Text>
+          </View> */}
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
-};
-
-export default HomeScreen;
+}
