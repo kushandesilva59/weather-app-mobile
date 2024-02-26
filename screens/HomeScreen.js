@@ -16,15 +16,26 @@ import {
 } from "react-native-heroicons/outline";
 import { MapPinIcon } from "react-native-heroicons/solid";
 import { debounce } from "lodash";
-import { fetchLocations } from "../api/weather";
+import { fetchLocations, fetchWeatherForecast } from "../api/weather";
+import { weatherImages } from "../constants/index";
 
 export default function HomeScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [locations, setLocations] = useState([1, 2, 3]);
+  const [locations, setLocations] = useState([]);
+  const [weather, setWeather] = useState({});
 
   const handleLocation = (loc) => {
     console.log("Location", loc);
+    setLocations([]);
+    setShowSearch(false);
+    fetchWeatherForecast({
+      cityName: loc.name,
+      days: "7",
+    }).then((data) => {
+      setWeather(data);
+      console.log("Forecast data :", data);
+    });
   };
 
   const handleSearch = (value) => {
@@ -32,12 +43,13 @@ export default function HomeScreen() {
 
     if (value.length > 2) {
       fetchLocations({ cityName: value }).then((data) => {
-        console.log("Got locations", data);
+        setLocations(data);
       });
     }
   };
 
   const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
+  const { current, location } = weather;
 
   return (
     <View className="flex-1 relative">
@@ -93,7 +105,7 @@ export default function HomeScreen() {
                   >
                     <MapPinIcon size="20" color="gray" />
                     <Text className="text-black text-lg ml-2">
-                      London, united kingdom
+                      {loc?.name}, {loc?.country}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -106,9 +118,9 @@ export default function HomeScreen() {
         <View className="mx-4 flex justify-around flex-1 mb-4">
           {/* Location */}
           <Text className="text-white text-center text-2xl font-bold">
-            London,
+            {location?.name},
             <Text className="text-lg font-semibold text-gray-300">
-              United Kingdom
+              {" "+location?.country}
             </Text>
           </Text>
 
@@ -124,18 +136,19 @@ export default function HomeScreen() {
         {/* Degree celcius */}
         <View className="space-y-1 mb-10">
           <Text className="text-center font-bold text-white text-6xl ml-5">
-            23&#176;
+            {current?.temp_c}&#176;
           </Text>
 
           <Text className="text-center  text-white text-xl tracking-widest">
-            Partly cloudy
+            {current?.condition?.text}
           </Text>
         </View>
 
         <View className="flex-row justify-between mx-4">
           <View className="flex-row space-x-2 items-center justify-center">
             <Image
-              source={require("../assets/windmills.png")}
+              //  source={weatherImages[current?.condition?.text]}
+              source={{uri: "https:"+current?.condition?.icon}}
               className="h-6 w-6"
             ></Image>
             <Text className="text-white font-semibold text-base">22kmh</Text>
