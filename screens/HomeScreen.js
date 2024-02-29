@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
-import * as Progress from 'react-native-progress'
+import * as Progress from "react-native-progress";
 import {
   View,
   Text,
@@ -32,23 +32,24 @@ export default function HomeScreen() {
   const handleLocation = (loc) => {
     console.log("Location", loc);
     setShowSearch(false);
- 
+
     setLocations([]);
     setSearchText(false);
-    setLoading(true)
+    setLoading(true);
     fetchWeatherForecast({
       cityName: loc.name,
       days: "7",
     }).then((data) => {
       setWeather(data);
-      setLoading(false)
-      console.log("Forecast data :", data);
+      setLoading(false);
+  
+      // console.log("Forecast data :", data);
     });
   };
 
   const handleSearch = (value) => {
     console.log(value);
-   
+
     if (value.length > 2) {
       fetchLocations({ cityName: value }).then((data) => {
         console.log("search : ", data);
@@ -58,17 +59,18 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     fetchMyWeatherData();
   }, []);
 
   const fetchMyWeatherData = async () => {
+
     fetchWeatherForecast({
-      cityName: "Aluthgama",
+      cityName:"Aluthgama",
       days: "7",
     }).then((data) => {
       setWeather(data);
-      setLoading(false)
+      setLoading(false);
     });
   };
 
@@ -86,9 +88,9 @@ export default function HomeScreen() {
       />
 
       {loading ? (
-       <View className="flex-1 flex-row justify-center items-center">
-           <Progress.CircleSnail thickness={10} size={140} color="#0bb4b2" />
-       </View>
+        <View className="flex-1 flex-row justify-center items-center">
+          <Progress.CircleSnail thickness={10} size={140} color="#0bb4b2" />
+        </View>
       ) : (
         <SafeAreaView className="flex flex-1">
           <View style={{ height: "7%" }} className="mx-4 relative z-50">
@@ -119,7 +121,7 @@ export default function HomeScreen() {
             </View>
 
             {locations.length > 0 && showSearch ? (
-              <View className="absolute w-full bg-gray-700 top-16 rounded-3xl">
+              <View className="absolute w-full bg-gray-300 top-16 rounded-3xl">
                 {locations.map((loc, index) => {
                   let showBorder = index + 1 != locations.length;
                   let borderClass = showBorder
@@ -204,7 +206,7 @@ export default function HomeScreen() {
                 className="h-6 w-6"
               ></Image>
               <Text className="text-white font-semibold text-base">
-                6:05 AM
+                {weather?.forecast?.forecastday[0]?.astro?.sunrise}
               </Text>
             </View>
           </View>
@@ -230,8 +232,9 @@ export default function HomeScreen() {
               return (
                 <View
                   key={index}
-                  className="flex justify-center items-center w-24 rounded-3xl mx-2"
-                  style={{ backgroundColor: theme.bgWhite(0.15) }}
+                  className="flex justify-center items-center w-24 h-30 rounded-3xl mx-2"
+                  style={{ backgroundColor: theme.bgWhite(0.15) }
+                }
                 >
                   <Image
                     source={weatherImages[item?.day?.condition?.text]}
