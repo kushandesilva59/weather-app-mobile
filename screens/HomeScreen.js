@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { theme } from "../theme";
+
 import {
   CalendarDaysIcon,
   MagnifyingGlassIcon,
@@ -17,7 +17,9 @@ import {
 import { MapPinIcon } from "react-native-heroicons/solid";
 import { debounce } from "lodash";
 import { fetchLocations, fetchWeatherForecast } from "../api/weather";
-import { weatherImages } from "../constants/index";
+
+import { image } from "../assets/images/moderate-rain.jpg";
+import { theme, weatherImages } from "../constants/index";
 
 export default function HomeScreen() {
   const [showSearch, setShowSearch] = useState(false);
@@ -28,7 +30,7 @@ export default function HomeScreen() {
   const handleLocation = (loc) => {
     console.log("Location", loc);
     setLocations([]);
-    setShowSearch(false);
+    setSearchText(false);
     fetchWeatherForecast({
       cityName: loc.name,
       days: "7",
@@ -43,6 +45,7 @@ export default function HomeScreen() {
 
     if (value.length > 2) {
       fetchLocations({ cityName: value }).then((data) => {
+        console.log("search : ", data);
         setLocations(data);
       });
     }
@@ -56,13 +59,13 @@ export default function HomeScreen() {
       <StatusBar style="light" />
 
       <Image
-        blurRadius={50}
+        blurRadius={40}
         source={require("../assets/bg.png")}
         className="absolute h-full w-full"
       />
 
       <SafeAreaView className="flex flex-1">
-        <View style={{ height: "7%" }} className="mx-4 relative z-50">
+        <View style={{ height: "12%" }} className="mx-4 relative z-50">
           <View
             className="flex-row justify-end items-center rounded-full"
             style={{
@@ -88,7 +91,7 @@ export default function HomeScreen() {
           </View>
 
           {locations.length > 0 && showSearch ? (
-            <View className="absolute w-full bg-gray-300 top-16 rounded-3xl">
+            <View className="absolute w-full bg-gray-700 top-16 rounded-3xl">
               {locations.map((loc, index) => {
                 let showBorder = index + 1 != locations.length;
                 let borderClass = showBorder
@@ -115,19 +118,20 @@ export default function HomeScreen() {
         </View>
 
         {/* Forecast section */}
-        <View className="mx-4 flex justify-around flex-1 mb-4">
+        <View className="mx-4 flex justify-around flex-1 mb-2">
           {/* Location */}
-          <Text className="text-white text-center text-2xl font-bold">
+          <Text className="text-white text-center text-2xl font-bold mt-10">
             {location?.name},
             <Text className="text-lg font-semibold text-gray-300">
-              {" "+location?.country}
+              {` ${location?.country}`}
             </Text>
           </Text>
 
           {/* Weather image */}
           <View className="flex-row justify-center">
             <Image
-              source={require("../assets/Image.webp")}
+              // ok this
+              source={weatherImages[current?.condition?.text]}
               className="w-52 h-52"
             ></Image>
           </View>
@@ -144,14 +148,16 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        <View className="flex-row justify-between mx-4">
+        <View className="flex-row justify-between mx-4 my-1">
           <View className="flex-row space-x-2 items-center justify-center">
             <Image
-              //  source={weatherImages[current?.condition?.text]}
-              source={{uri: "https:"+current?.condition?.icon}}
+              source={require("../assets/windmills.png")}
               className="h-6 w-6"
+              space-y-3
             ></Image>
-            <Text className="text-white font-semibold text-base">22kmh</Text>
+            <Text className="text-white font-semibold text-base">
+              {current?.wind_kph}kmh
+            </Text>
           </View>
 
           <View className="flex-row space-x-2 items-center justify-center">
@@ -159,7 +165,9 @@ export default function HomeScreen() {
               source={require("../assets/water-drop.png")}
               className="h-6 w-6"
             ></Image>
-            <Text className="text-white font-semibold text-base">23%</Text>
+            <Text className="text-white font-semibold text-base">
+              {current?.humidity}%
+            </Text>
           </View>
 
           <View className="flex-row space-x-2 items-center justify-center">
@@ -183,44 +191,29 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingHorizontal: 15 }}
           showsHorizontallScrollIndicator={false}
         >
-          <View
-            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
-            style={{ backgroundColor: theme.bgWhite(0.15) }}
-          >
-            <Image
-              source={require("../assets/moon.png")}
-              className="h-11 w-11"
-            />
-            <Text className="text-white">Monday</Text>
-            <Text className="text-white text-xl font-semibold">13&#176;</Text>
-          </View>
+          {weather?.forecast?.forecastday?.map((item, index) => {
+            let date = new Date(item.date)
+              let options = {weekday: 'long'};
+              let dayName = date.toLocaleDateString('en-US',options);
+              dayName = dayName.split(',')[0]
 
-          {/* <View
-            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
-            style={{ backgroundColor: theme.bgWhite(0.15) }}
-          >
-            <Image source={require("../assets/")} className="h-11 w-11" />
-            <Text className="text-white">Monday</Text>
-            <Text className="text-white text-xl font-semibold">13&#176;</Text>
-          </View>
-
-          <View
-            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
-            style={{ backgroundColor: theme.bgWhite(0.15) }}
-          >
-            <Image source={require("../assets/")} className="h-11 w-11" />
-            <Text className="text-white">Monday</Text>
-            <Text className="text-white text-xl font-semibold">13&#176;</Text>
-          </View>
-
-          <View
-            className="flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4 "
-            style={{ backgroundColor: theme.bgWhite(0.15) }}
-          >
-            <Image source={require("../assets/")} className="h-11 w-11" />
-            <Text className="text-white">Monday</Text>
-            <Text className="text-white text-xl font-semibold">13&#176;</Text>
-          </View> */}
+            return (
+              <View
+              key={index}
+                className="flex justify-center items-center w-24 rounded-3xl mx-2"
+                style={{ backgroundColor: theme.bgWhite(0.15) }}
+              >
+                <Image
+                  source={weatherImages[item?.day?.condition?.text]}
+                  className="w-20 h-20"
+                />
+                <Text className="text-white">{dayName}</Text>
+                <Text className="text-white text-xl font-semibold">
+                  {item?.day?.avgtemp_c}&#176;
+                </Text>
+              </View>
+            );
+          })}
         </ScrollView>
       </SafeAreaView>
     </View>

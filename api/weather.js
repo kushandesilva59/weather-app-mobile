@@ -24,11 +24,9 @@ const apiCAll = async (endpoint) => {
 };
 
 export const fetchWeatherForecast = (params) => {
-//   let forecastUrl = forecastEndPoint(params);
   return apiCAll(forecastEndPoint(params));
 };
 
 export const fetchLocations = (params) => {
-//   let locationsUrl = locationsEndPoint(params);
   return apiCAll(locationsEndPoint(params));
 };
