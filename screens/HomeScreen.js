@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
+import * as Progress from 'react-native-progress'
 import {
   View,
   Text,
@@ -34,11 +35,13 @@ export default function HomeScreen() {
  
     setLocations([]);
     setSearchText(false);
+    setLoading(true)
     fetchWeatherForecast({
       cityName: loc.name,
       days: "7",
     }).then((data) => {
       setWeather(data);
+      setLoading(false)
       console.log("Forecast data :", data);
     });
   };
@@ -55,6 +58,7 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
+    setLoading(true)
     fetchMyWeatherData();
   }, []);
 
@@ -64,6 +68,7 @@ export default function HomeScreen() {
       days: "7",
     }).then((data) => {
       setWeather(data);
+      setLoading(false)
     });
   };
 
@@ -82,7 +87,7 @@ export default function HomeScreen() {
 
       {loading ? (
        <View className="flex-1 flex-row justify-center items-center">
-            <Text className='text-white text-4xl'>loading!...</Text>
+           <Progress.CircleSnail thickness={10} size={140} color="#0bb4b2" />
        </View>
       ) : (
         <SafeAreaView className="flex flex-1">
